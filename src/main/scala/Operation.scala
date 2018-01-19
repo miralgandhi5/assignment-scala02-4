@@ -1,3 +1,4 @@
+import scala.reflect.{ClassTag, classTag}
 object Operation {
 
   private sealed trait CommissionDisplay {
@@ -13,24 +14,26 @@ object Operation {
   case class StreetSideCommission(override val value: Int) extends Commission {}
 
   class TotalCommission {
-    def getTotalCommission[T <: Commission](listOfCommission: List[T]): String = {
+    def getTotalCommission[T <: Commission :ClassTag](listOfCommission: List[T]): String = {
       listOfCommission.totalDisplayCommission
 
     }
 
-    private implicit class ListExtension[T <: Commission](listOfCommission: List[T]) extends CommissionDisplay {
+    private implicit class ListExtension[T <: Commission :ClassTag](listOfCommission: List[T]) extends CommissionDisplay {
       override def totalDisplayCommission: String = {
         if (listOfCommission.isEmpty) {
           "Empty list"
         }
 
         else {
-          listOfCommission.head match {
+          listOfCommission match {
 
-            case _: ClientSideCommission => val res = listOfCommission.map(_.value).sum
+            case _: List[ClientSideCommission @unchecked] if classTag[T] == classTag[ClientSideCommission] => val res = listOfCommission.map(_.value).sum
               s"The total client commission is $res"
-            case _: StreetSideCommission => val res = listOfCommission.map(_.value).sum
+            case _: List[StreetSideCommission @unchecked] if classTag[T] == classTag[StreetSideCommission] => val res = listOfCommission.map(_.value).sum
               s"The total street commission is $res"
+            case _: List[Commission @unchecked] if classTag[T] == classTag[Commission] => val res = listOfCommission.map(_.value).sum
+              s"The total commission is $res"
 
           }
 
