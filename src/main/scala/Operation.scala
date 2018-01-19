@@ -24,7 +24,6 @@ object Operation {
       override def totalDisplayCommission: String = {
 
         listOfCommission match {
-
           case _ if classTag[T] == classTag[ClientSideCommission] => val res = listOfCommission.map(_.value).sum
             s"The total client commission is $res"
           case _ if classTag[T] == classTag[StreetSideCommission] => val res = listOfCommission.map(_.value).sum
